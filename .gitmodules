@@ -1,0 +1,3 @@
+[submodule "rf_msgs"]
+	path = rf_msgs
+	url = https://github.com/ucsdwcsng/rf_msgs.git
