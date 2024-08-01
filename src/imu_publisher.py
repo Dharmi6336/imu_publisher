@@ -22,7 +22,11 @@ class IMU_publisher:
         self.sensor_types = ["android.sensor.accelerometer", "android.sensor.gyroscope"]
         self.encoded_type = json.dumps(self.sensor_types)
         self.encoded_types = urllib.parse.quote(self.encoded_type)
-        self.url = f"ws://localhost:8080/sensors/connect?types={self.encoded_types}"
+        #self.url = f"ws://localhost:8080/sensors/connect?types={self.encoded_types}"
+        #self.url = f"ws://192.168.229.152:8080/sensors/connect?types={self.encoded_types}"
+        self.url = f"ws://10.42.0.166:8080/sensors/connect?types={self.encoded_types}"
+
+
         self.imu_buffer = {
             'android.sensor.accelerometer': deque(maxlen=1000),
             'android.sensor.gyroscope': deque(maxlen=1000)
@@ -90,7 +94,7 @@ class IMU_publisher:
             except rospy.ROSException as e:
                 print(f"Error publishing IMU message: {e}")
 
-            # print(df_merged)
+            #print(df_merged)
 
     def on_message(self, ws, message):
         try:
