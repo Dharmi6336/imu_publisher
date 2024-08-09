@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-
 import rospy
 import urllib.parse
 import websocket
@@ -18,26 +17,27 @@ class IMU_publisher:
     
     def __init__(self):
         self.ws = None
-        self.imu_pub = rospy.Publisher('/imu/data', Imu, queue_size=10)
+        self.imu_pub = rospy.Publisher('/imu', Imu, queue_size=10)
         self.sensor_types = ["android.sensor.accelerometer", "android.sensor.gyroscope"]
         self.encoded_type = json.dumps(self.sensor_types)
         self.encoded_types = urllib.parse.quote(self.encoded_type)
-        #self.url = f"ws://localhost:8080/sensors/connect?types={self.encoded_types}"
-        #self.url = f"ws://192.168.229.152:8080/sensors/connect?types={self.encoded_types}"
-        self.url = f"ws://10.42.0.166:8080/sensors/connect?types={self.encoded_types}"
+        self.url = f"ws://localhost:8090/sensors/connect?types={self.encoded_types}"
+        #self.url = f"ws://192.168.229.152:8080/sensors/connect?types={self.encoded_types}" #Connected via wifi
+        #self.url = f"ws://10.42.0.166:8080/sensors/connect?types={self.encoded_types}" #Connected via laptop hotspot
 
 
         self.imu_buffer = {
             'android.sensor.accelerometer': deque(maxlen=1000),
             'android.sensor.gyroscope': deque(maxlen=1000)
         }
+
         self.rate = rospy.Rate(10)
 
     def on_error(self, ws, error):
         print(f"Error occurred: {error}")
 
     def on_close(self, ws, close_code, reason):
-        print(f"Connection closed: {reason}")
+
         self.rate.sleep()
         self.connect()
 
@@ -69,7 +69,6 @@ class IMU_publisher:
             imu_msg.header.frame_id = "imu_link" 
 
             latest_timestamp_ms = df_merged['timestamp'].iloc[-1]
-            # imu_msg.header.stamp = self.android_timestamp_to_ros_time(latest_timestamp_ms)
             imu_msg.header.stamp = rospy.Time.now()
             
             imu_msg.orientation = Quaternion(0, 0, 0, 1)  # Placeholder values
@@ -93,8 +92,6 @@ class IMU_publisher:
                 self.imu_pub.publish(imu_msg)
             except rospy.ROSException as e:
                 print(f"Error publishing IMU message: {e}")
-
-            #print(df_merged)
 
     def on_message(self, ws, message):
         try:

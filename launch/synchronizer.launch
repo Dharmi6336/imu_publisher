@@ -1,5 +1,6 @@
 <launch>
     <include file="$(find imu_publisher)/launch/imu_publisher.launch"/>
     <include file="$(find wiros_csi_node)/launch/basic.launch"/>
-    <node name="synchronizer_node" pkg="imu_publisher" type="sync.py" output="screen"></node>
+    <include file="$(find imu_publisher)/launch/gps_publisher.launch"/>
+    <node name="synchronizer_node" pkg="imu_publisher" type="synchronizer.py" output="screen"></node>
 </launch>

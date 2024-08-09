@@ -1,0 +1,10 @@
+<launch>
+    <!-- Node to publish GPS data -->
+    <node
+        pkg="imu_publisher"
+        type="gps_publisher.py"
+        name="gps_publisher"
+        output="screen">
+        <!-- Add any parameters or arguments here if needed -->
+    </node>
+</launch>
